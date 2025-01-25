@@ -18,12 +18,12 @@ LRESULT CALLBACK WndProc(HWND h_wnd, UINT msg, WPARAM w_param, LPARAM l_param)
     return DefWindowProc(h_wnd, msg, w_param, l_param);
 }
 
-int WINAPI wWinMain(_In_ HINSTANCE h_instance, _In_opt_ HINSTANCE h_prev_instance,
-    _In_ LPWSTR lp_cmd_line, _In_ int n_show_cmd)
+HWND InitWindow(HINSTANCE h_instance, const wchar_t* wnd_title, int wnd_w, int wnd_h)
 {
-    HWND h_wnd{};
-    MSG msg{};
-    WNDCLASSEX wc{};
+    int wnd_pos_x = 0;
+    int wnd_pos_y = 0;
+    HWND h_wnd = NULL;
+    WNDCLASSEX wc = {};
 
     wc.cbSize = sizeof(wc);
     wc.style = CS_DBLCLKS | CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
@@ -43,14 +43,17 @@ int WINAPI wWinMain(_In_ HINSTANCE h_instance, _In_opt_ HINSTANCE h_prev_instanc
         return NULL;
     }
 
+    // Place the window in cetnter of the screen
+    wnd_pos_x = (GetSystemMetrics(SM_CXSCREEN) - wnd_w) / 2;
+    wnd_pos_y = (GetSystemMetrics(SM_CYSCREEN) - wnd_h) / 2;
+
     h_wnd = CreateWindowEx(
         0,
         WND_CLASS_NAME,
         WND_TITLE,
         WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-        0, 0,
-        500,
-        300,
+        wnd_pos_x, wnd_pos_y,
+        wnd_w, wnd_h,
         NULL,
         NULL,
         h_instance,
@@ -59,6 +62,24 @@ int WINAPI wWinMain(_In_ HINSTANCE h_instance, _In_opt_ HINSTANCE h_prev_instanc
     if (!h_wnd) {
         MessageBox(NULL, L"Error", L"CreateWindowEx() fail", MB_ICONERROR);
         return NULL;
+    }
+
+    return h_wnd;
+}
+
+int WINAPI wWinMain(_In_ HINSTANCE h_instance, _In_opt_ HINSTANCE h_prev_instance,
+    _In_ LPWSTR lp_cmd_line, _In_ int n_show_cmd)
+{
+    int wnd_w = 600;
+    int wnd_h = 480;
+    HWND h_wnd{};
+    MSG msg{};
+
+    h_wnd = InitWindow(h_instance, WND_TITLE, wnd_w, wnd_h);
+
+    if (!h_wnd) {
+        MessageBox(NULL, L"Error", L"InitWindow() fail", MB_ICONERROR);
+        return 1;
     }
 
     /* Main loop */
