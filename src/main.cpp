@@ -1,9 +1,26 @@
 #define WIN32_LEAN_AND_MEAN
 
 #include <windows.h>
+#include <stdio.h>
 
 #define WND_CLASS_NAME L"MAIN_WND"
 #define WND_TITLE L"Window title"
+
+#define LOG_FILENAME "output.log"
+
+void WriteToLogFile(const char* data_str)
+{
+    FILE* log_file_ptr = NULL;
+
+    log_file_ptr = fopen(LOG_FILENAME, "a+");
+    if (!log_file_ptr) {
+        return;
+    }
+
+    fprintf(log_file_ptr, data_str);
+
+    fclose(log_file_ptr);
+}
 
 LRESULT CALLBACK WndProc(HWND h_wnd, UINT msg, WPARAM w_param, LPARAM l_param)
 {
@@ -81,6 +98,8 @@ int WINAPI wWinMain(_In_ HINSTANCE h_instance, _In_opt_ HINSTANCE h_prev_instanc
         MessageBox(NULL, L"Error", L"InitWindow() fail", MB_ICONERROR);
         return 1;
     }
+
+    WriteToLogFile("Test log message\n");
 
     /* Main loop */
     for (;;) {
