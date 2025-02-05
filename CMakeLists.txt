@@ -17,6 +17,14 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_executable(${PROJECT_NAME}
     WIN32
     src/main.cpp
+    src/logger.h
+    src/logger.cpp
+)
+
+find_package(EASTL CONFIG REQUIRED)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE
+    EASTL
 )
 
 add_compile_definitions(UNICODE _UNICODE)
